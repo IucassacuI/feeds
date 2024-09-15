@@ -3,11 +3,12 @@ package rss
 import "encoding/xml"
 
 type RSS struct {
-	Channel Channel `xml:"channel"`
+	XMLName xml.Name `xml:"rss"`
+	Channel Channel  `xml:"channel"`
 }
 
 type RDF struct {
-	XMLName xml.Name   `xml:"RDF"`
+	XMLName xml.Name   `xml:"rdf:RDF"`
 	Channel RDFChannel `xml:"channel"`
 	Items   []Item     `xml:"item"`
 }

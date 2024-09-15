@@ -196,7 +196,7 @@ func Parse(feed []byte) Feed {
 		return ParseAtom(feed)
 	} else if bytes.Contains(feed, []byte("<rss")) {
 		return ParseRSS(feed)
-	} else if bytes.Contains(feed, []byte("<rdf")) {
+	} else if bytes.Contains(feed, []byte("<rdf:RDF")) {
 		return ParseRDF(feed)
 	}
 

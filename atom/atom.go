@@ -1,6 +1,9 @@
 package atom
 
+import "encoding/xml"
+
 type Atom struct {
+	XMLName   xml.Name  `xml:"feed"`
 	Title     string    `xml:"title"`
 	Author    string    `xml:"author>name"`
 	Published string    `xml:"published"`
