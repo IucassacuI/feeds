@@ -8,7 +8,7 @@ type RSS struct {
 }
 
 type RDF struct {
-	XMLName xml.Name   `xml:"rdf:RDF"`
+	XMLName xml.Name   `xml:"RDF"`
 	Channel RDFChannel `xml:"channel"`
 	Items   []Item     `xml:"item"`
 }

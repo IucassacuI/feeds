@@ -163,6 +163,9 @@ func Marshal(feed Feed) []byte {
 		}
 
 		data, err = xml.Marshal(doc)
+		if err != nil {
+			data = bytes.Replace(data, []byte("RDF>"), []byte("rdf:RDF>"), 2)
+		}
 	} else if feed.Format == "atom" {
 		doc := atom.Atom{
 			Title:     feed.Title,
@@ -193,10 +196,13 @@ func Marshal(feed Feed) []byte {
 
 func Parse(feed []byte) Feed {
 	if bytes.Contains(feed, []byte("<feed")) {
+		feed := feed[bytes.Index(feed, []byte("<feed")):]
 		return ParseAtom(feed)
 	} else if bytes.Contains(feed, []byte("<rss")) {
+		feed := feed[bytes.Index(feed, []byte("<rss")):]
 		return ParseRSS(feed)
 	} else if bytes.Contains(feed, []byte("<rdf:RDF")) {
+		feed := feed[bytes.Index(feed, []byte("<rdf:RDF")):]
 		return ParseRDF(feed)
 	}
 
