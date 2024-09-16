@@ -6,6 +6,7 @@ import (
 	"github.com/IucassacuI/feeds/atom"
 	"github.com/IucassacuI/feeds/rss"
 	"time"
+  "fmt"
 )
 
 type Item struct {
@@ -70,6 +71,7 @@ func ParseRDF(feed []byte) Feed {
 	err := xml.Unmarshal(feed, &doc)
 
 	if err != nil {
+    fmt.Println(err)
 		return Feed{}
 	}
 
@@ -107,15 +109,23 @@ func ParseAtom(feed []byte) Feed {
 	final.Hyperlink = doc.Hyperlink.Href
 	final.Title = doc.Title
 	final.Description = "N/A"
-	final.Published = datetime(doc.Published)
-	final.Updated = datetime(doc.Updated)
+	final.Published = doc.Published
+	final.Updated = doc.Updated
 	final.Author = doc.Author
 
-	for _, field := range []*string{&final.Hyperlink, &final.Title, &final.Published, &final.Updated} {
+	for _, field := range []*string{&final.Hyperlink, &final.Title, &final.Published, &final.Updated, &final.Author} {
 		if *field == "" {
 			*field = "N/A"
 		}
 	}
+
+  if final.Published != "N/A" {
+    final.Published = datetime(final.Published)
+  }
+
+  if final.Updated != "N/A" {
+    final.Updated = datetime(final.Updated)
+  }
 
 	for _, entry := range doc.Entries {
 		final.Items = append(final.Items, Item{
@@ -149,6 +159,9 @@ func Marshal(feed Feed) []byte {
 		}
 
 		data, err = xml.Marshal(doc)
+    if err == nil {
+      data = bytes.Replace(data, []byte("RSS>"), []byte("rss>"), 2)
+    }
 	} else if feed.Format == "rdf" {
 		doc := rss.RDF{
 			Channel: rss.RDFChannel{
@@ -163,9 +176,9 @@ func Marshal(feed Feed) []byte {
 		}
 
 		data, err = xml.Marshal(doc)
-		if err != nil {
-			data = bytes.Replace(data, []byte("RDF>"), []byte("rdf:RDF>"), 2)
-		}
+    if err == nil {
+      data = bytes.Replace(data, []byte("RDF>"), []byte("rdf:RDF>"), 2)
+    }
 	} else if feed.Format == "atom" {
 		doc := atom.Atom{
 			Title:     feed.Title,
@@ -185,6 +198,9 @@ func Marshal(feed Feed) []byte {
 		}
 
 		data, err = xml.Marshal(doc)
+    if err == nil {
+      data = bytes.Replace(data, []byte("Atom>"), []byte("feed>"), 2)
+    }
 	}
 
 	if err != nil {
@@ -196,13 +212,13 @@ func Marshal(feed Feed) []byte {
 
 func Parse(feed []byte) Feed {
 	if bytes.Contains(feed, []byte("<feed")) {
-		feed := feed[bytes.Index(feed, []byte("<feed")):]
+    feed := feed[bytes.Index(feed, []byte("<feed")):]
 		return ParseAtom(feed)
 	} else if bytes.Contains(feed, []byte("<rss")) {
-		feed := feed[bytes.Index(feed, []byte("<rss")):]
+    feed := feed[bytes.Index(feed, []byte("<rss")):]
 		return ParseRSS(feed)
 	} else if bytes.Contains(feed, []byte("<rdf:RDF")) {
-		feed := feed[bytes.Index(feed, []byte("<rdf:RDF")):]
+    feed := feed[bytes.Index(feed, []byte("<rdf:RDF")):]
 		return ParseRDF(feed)
 	}
 
