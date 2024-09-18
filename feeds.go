@@ -6,7 +6,6 @@ import (
 	"github.com/IucassacuI/feeds/atom"
 	"github.com/IucassacuI/feeds/rss"
 	"time"
-  "fmt"
 )
 
 type Item struct {
@@ -60,6 +59,12 @@ func ParseRSS(feed []byte) Feed {
 	}
 
 	for _, item := range doc.Channel.Items {
+    for _, field := range []*string{&item.Hyperlink, &item.Title, &item.Published} {
+      if *field == "" {
+        *field = "N/A"
+      }
+    }
+
 		final.Items = append(final.Items, Item{Hyperlink: item.Hyperlink, Title: item.Title, Published: item.Published, Updated: "N/A"})
 	}
 
@@ -71,7 +76,6 @@ func ParseRDF(feed []byte) Feed {
 	err := xml.Unmarshal(feed, &doc)
 
 	if err != nil {
-    fmt.Println(err)
 		return Feed{}
 	}
 
@@ -91,6 +95,12 @@ func ParseRDF(feed []byte) Feed {
 	}
 
 	for _, item := range doc.Items {
+    for _, field := range []*string{&item.Hyperlink, &item.Title, &item.Published} {
+      if *field == "" {
+        *field = "N/A"
+      }
+    }
+
 		final.Items = append(final.Items, Item{Hyperlink: item.Hyperlink, Title: item.Title, Published: item.Published, Updated: "N/A"})
 	}
 
@@ -128,6 +138,12 @@ func ParseAtom(feed []byte) Feed {
   }
 
 	for _, entry := range doc.Entries {
+    for _, field := range []*string{&entry.Hyperlink.Href, &entry.Title, &entry.Published} {
+      if *field == "" {
+        *field = "N/A"
+      }
+    }
+
 		final.Items = append(final.Items, Item{
 			Title:     entry.Title,
 			Hyperlink: entry.Hyperlink.Href,
