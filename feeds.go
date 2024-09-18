@@ -2,6 +2,7 @@ package feeds
 
 import (
 	"bytes"
+  "strings"
 	"encoding/xml"
 	"github.com/IucassacuI/feeds/atom"
 	"github.com/IucassacuI/feeds/rss"
@@ -55,13 +56,17 @@ func ParseRSS(feed []byte) Feed {
 	for _, field := range []*string{&final.Hyperlink, &final.Title, &final.Description, &final.Published, &final.Updated} {
 		if *field == "" {
 			*field = "N/A"
-		}
+		} else {
+      *field = strings.TrimSpace(*field)
+    }
 	}
 
 	for _, item := range doc.Channel.Items {
     for _, field := range []*string{&item.Hyperlink, &item.Title, &item.Published} {
       if *field == "" {
         *field = "N/A"
+      } else {
+        *field = strings.TrimSpace(*field)
       }
     }
 
@@ -91,13 +96,17 @@ func ParseRDF(feed []byte) Feed {
 	for _, field := range []*string{&final.Hyperlink, &final.Title, &final.Description} {
 		if *field == "" {
 			*field = "N/A"
-		}
+		} else {
+      *field = strings.TrimSpace(*field)
+    }
 	}
 
 	for _, item := range doc.Items {
     for _, field := range []*string{&item.Hyperlink, &item.Title, &item.Published} {
       if *field == "" {
         *field = "N/A"
+      } else {
+        *field = strings.TrimSpace(*field)
       }
     }
 
@@ -126,7 +135,9 @@ func ParseAtom(feed []byte) Feed {
 	for _, field := range []*string{&final.Hyperlink, &final.Title, &final.Published, &final.Updated, &final.Author} {
 		if *field == "" {
 			*field = "N/A"
-		}
+		} else {
+      *field = strings.TrimSpace(*field)
+    }
 	}
 
   if final.Published != "N/A" {
@@ -141,6 +152,8 @@ func ParseAtom(feed []byte) Feed {
     for _, field := range []*string{&entry.Hyperlink.Href, &entry.Title, &entry.Published} {
       if *field == "" {
         *field = "N/A"
+      } else {
+        *field = strings.TrimSpace(*field)
       }
     }
 
