@@ -1,7 +1,5 @@
 package atom
 
-import "encoding/xml"
-
 type Atom struct {
 	Title     string    `xml:"title"`
 	Author    string    `xml:"author>name"`
