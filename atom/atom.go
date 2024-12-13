@@ -14,6 +14,7 @@ type Entry struct {
 	Hyperlink Hyperlink `xml:"link"`
 	Published string    `xml:"published"`
 	Updated   string    `xml:"updated"`
+	Summary   string    `xml:"summary"`
 }
 
 type Hyperlink struct {

@@ -10,10 +10,11 @@ import (
 )
 
 type Item struct {
-	Hyperlink string
-	Title     string
-	Published string
-	Updated   string
+	Hyperlink   string
+	Title       string
+	Published   string
+	Updated     string
+	Description string
 }
 
 type Feed struct {
@@ -70,7 +71,7 @@ func ParseRSS(feed []byte) Feed {
 			}
 		}
 
-		final.Items = append(final.Items, Item{Hyperlink: item.Hyperlink, Title: item.Title, Published: item.Published, Updated: "N/A"})
+		final.Items = append(final.Items, Item{Hyperlink: item.Hyperlink, Title: item.Title, Published: item.Published, Updated: "N/A", Description: item.Description})
 	}
 
 	return final
@@ -110,7 +111,13 @@ func ParseRDF(feed []byte) Feed {
 			}
 		}
 
-		final.Items = append(final.Items, Item{Hyperlink: item.Hyperlink, Title: item.Title, Published: item.Published, Updated: "N/A"})
+		final.Items = append(final.Items, Item{
+			Hyperlink:   item.Hyperlink,
+			Title:       item.Title,
+			Published:   item.Published,
+			Updated:     "N/A",
+			Description: item.Description,
+		})
 	}
 
 	return final
@@ -158,10 +165,11 @@ func ParseAtom(feed []byte) Feed {
 		}
 
 		final.Items = append(final.Items, Item{
-			Title:     entry.Title,
-			Hyperlink: entry.Hyperlink.Href,
-			Published: datetime(entry.Published),
-			Updated:   datetime(entry.Updated),
+			Title:       entry.Title,
+			Hyperlink:   entry.Hyperlink.Href,
+			Published:   datetime(entry.Published),
+			Updated:     datetime(entry.Updated),
+			Description: entry.Summary,
 		})
 	}
 
