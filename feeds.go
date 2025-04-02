@@ -29,11 +29,19 @@ type Feed struct {
 }
 
 func rfc(datetime string) string {
+	if datetime == "N/A" {
+		return ""
+	}
+
 	t, _ := time.Parse(time.DateTime, datetime)
 	return t.Format(time.RFC3339)
 }
 
 func datetime(rfcdate string) string {
+	if rfcdate == "N/A" {
+		return "N/A"
+	}
+
 	t, _ := time.Parse(time.RFC3339, rfcdate)
 	return t.Format(time.DateTime)
 }
@@ -156,7 +164,7 @@ func ParseAtom(feed []byte) Feed {
 	}
 
 	for _, entry := range doc.Entries {
-		for _, field := range []*string{&entry.Hyperlink.Href, &entry.Title, &entry.Published} {
+		for _, field := range []*string{&entry.Hyperlink.Href, &entry.Title, &entry.Published, &entry.Updated} {
 			if *field == "" {
 				*field = "N/A"
 			} else {
